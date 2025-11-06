@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  bitcoin-broker:
+    build: .
+    container_name: bitcoin_broker_app
+    volumes:
+      - ./app.py:/app/app.py
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    command: tail -f /dev/null
+    networks:
+      - bitcoin-broker-network
+
+networks:
+  bitcoin-broker-network:
+    driver: bridge

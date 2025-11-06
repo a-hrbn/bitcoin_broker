@@ -1,0 +1,4 @@
+requests
+praw
+pandas
+google-genai
