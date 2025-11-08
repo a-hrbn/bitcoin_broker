@@ -9,9 +9,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
-    tty: true
-    stdin_open: true
-    command: tail -f /dev/null
+    command: python -u app.py
     networks:
       - bitcoin-broker-network
 

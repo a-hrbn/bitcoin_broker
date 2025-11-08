@@ -1,9 +1,14 @@
 import requests
 from google import genai
+import schedule
+import time
+import datetime
 
 #Add your API keys here
-REDDIT_API_KEY = "ADD REDDIT API KEY HERE"
-GEMINI_API_KEY = "ADD GEMINI API KEY HERE"
+REDDIT_API_KEY = ""
+GEMINI_API_KEY = ""
+BOT_TOKEN = ""
+GROUP_TOKEN = ""
 
 
 AI_PROMPT = "Analysiere die folgenden Informationen aus den meistdiskutierten Reddit-Beiträgen des Monats über Bitcoin. \n \
@@ -60,14 +65,37 @@ def ai_evaluation(important_info):
 
     return response_filtered
 
+def send_telegram_message(message):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    data = {
+        "chat_id": GROUP_TOKEN,
+        "text": message,
+        "parse_mode": "Markdown"
+    }
+    response = requests.post(url, data=data)
+    if response.status_code != 200:
+        print("Failed to send message!")
+    else:
+        print("Message sent successfully!")
 
 
-if __name__ == "__main__":
-    data = fetch_data("https://www.reddit.com/r/Bitcoin/top.json?limit=100&t=month")
-    
+def do_monthly_task():
+    print("Executing task...")
+    data = fetch_data("https://www.reddit.com/r/Bitcoin/top.json?limit=2500&t=month")
     important_info = extract_important_info(data)
-
     print(AI_PROMPT)
-
     ai_response = ai_evaluation(important_info)
     print(ai_response)
+    send_telegram_message(ai_response)
+    
+if __name__ == "__main__":
+    schedule.every().day.at("08:00").do(do_monthly_task)
+    print("Scheduler started, waiting for next run...")
+
+    while True:
+        today = datetime.date.today()
+        print("Checking day:", today.day)
+        if today.day == 1:
+            schedule.run_pending()
+            print("checked at", datetime.datetime.now())
+        time.sleep(60)  # Check once a minute

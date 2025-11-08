@@ -10,4 +10,4 @@ RUN apt update && apt install -y iputils-ping && rm -rf /var/lib/apt/lists/*
 
 COPY app.py .
 
-CMD ["python", "app.py"]
+CMD ["python", "-u", "app.py"]

@@ -2,3 +2,4 @@ requests
 praw
 pandas
 google-genai
+schedule
